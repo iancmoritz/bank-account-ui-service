@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, PagedResponse } from '../types';
+import { User } from '../types';
 import { fetchUsers } from '../services/api';
 import {
   Pagination,
@@ -61,10 +61,8 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
         items.push(
           <PaginationItem key={i}>
             <PaginationLink
-              href="#"
               isActive={i === currentPage}
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 handlePageChange(i);
               }}
             >
@@ -77,10 +75,8 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
       items.push(
         <PaginationItem key={0}>
           <PaginationLink
-            href="#"
             isActive={0 === currentPage}
-            onClick={(e) => {
-              e.preventDefault();
+            onClick={() => {
               handlePageChange(0);
             }}
           >
@@ -105,10 +101,8 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
           items.push(
             <PaginationItem key={i}>
               <PaginationLink
-                href="#"
                 isActive={i === currentPage}
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   handlePageChange(i);
                 }}
               >
@@ -131,10 +125,8 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
         items.push(
           <PaginationItem key={totalPages - 1}>
             <PaginationLink
-              href="#"
               isActive={totalPages - 1 === currentPage}
-              onClick={(e) => {
-                e.preventDefault();
+              onClick={() => {
                 handlePageChange(totalPages - 1);
               }}
             >
@@ -234,9 +226,7 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
           <PaginationContent>
             <PaginationItem>
               <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   if (currentPage > 0) {
                     handlePageChange(currentPage - 1);
                   }
@@ -249,9 +239,7 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
             
             <PaginationItem>
               <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
+                onClick={() => {
                   if (currentPage < totalPages - 1) {
                     handlePageChange(currentPage + 1);
                   }
