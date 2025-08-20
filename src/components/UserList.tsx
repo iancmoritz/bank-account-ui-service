@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { User } from '../types';
+import { User, PagedResponse } from '../types';
 import { fetchUsers } from '../services/api';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+  PaginationEllipsis,
+} from './ui/pagination';
 
 interface UserListProps {
   selectedUserId: string | null;
@@ -11,17 +20,23 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(20);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    loadUsers(currentPage);
+  }, [currentPage]);
 
-  const loadUsers = async () => {
+  const loadUsers = async (page: number) => {
     try {
       setLoading(true);
       setError(null);
-      const userData = await fetchUsers();
-      setUsers(userData);
+      const userData = await fetchUsers(page, pageSize);
+      setUsers(userData.content);
+      setTotalPages(userData.totalPages);
+      setTotalElements(userData.totalElements);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load users');
     } finally {
@@ -30,7 +45,107 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
   };
 
   const handleRetry = () => {
-    loadUsers();
+    loadUsers(currentPage);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const renderPaginationItems = () => {
+    const items = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 0; i < totalPages; i++) {
+        items.push(
+          <PaginationItem key={i}>
+            <PaginationLink
+              href="#"
+              isActive={i === currentPage}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(i);
+              }}
+            >
+              {i + 1}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    } else {
+      items.push(
+        <PaginationItem key={0}>
+          <PaginationLink
+            href="#"
+            isActive={0 === currentPage}
+            onClick={(e) => {
+              e.preventDefault();
+              handlePageChange(0);
+            }}
+          >
+            1
+          </PaginationLink>
+        </PaginationItem>
+      );
+
+      if (currentPage > 2) {
+        items.push(
+          <PaginationItem key="ellipsis1">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      const start = Math.max(1, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+
+      for (let i = start; i < end; i++) {
+        if (i !== 0 && i !== totalPages - 1) {
+          items.push(
+            <PaginationItem key={i}>
+              <PaginationLink
+                href="#"
+                isActive={i === currentPage}
+                onClick={(e) => {
+                  e.preventDefault();
+                  handlePageChange(i);
+                }}
+              >
+                {i + 1}
+              </PaginationLink>
+            </PaginationItem>
+          );
+        }
+      }
+
+      if (currentPage < totalPages - 3) {
+        items.push(
+          <PaginationItem key="ellipsis2">
+            <PaginationEllipsis />
+          </PaginationItem>
+        );
+      }
+
+      if (totalPages > 1) {
+        items.push(
+          <PaginationItem key={totalPages - 1}>
+            <PaginationLink
+              href="#"
+              isActive={totalPages - 1 === currentPage}
+              onClick={(e) => {
+                e.preventDefault();
+                handlePageChange(totalPages - 1);
+              }}
+            >
+              {totalPages}
+            </PaginationLink>
+          </PaginationItem>
+        );
+      }
+    }
+
+    return items;
   };
 
   if (loading) {
@@ -83,8 +198,13 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Users</h2>
-      <div className="space-y-2">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-semibold text-gray-800">Users</h2>
+        <span className="text-sm text-gray-500">
+          {totalElements} total users
+        </span>
+      </div>
+      <div className="space-y-2 mb-6">
         {users.map((user) => (
           <button
             key={user.userId}
@@ -108,6 +228,40 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
           </button>
         ))}
       </div>
+      
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage > 0) {
+                    handlePageChange(currentPage - 1);
+                  }
+                }}
+                className={currentPage === 0 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+            
+            {renderPaginationItems()}
+            
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (currentPage < totalPages - 1) {
+                    handlePageChange(currentPage + 1);
+                  }
+                }}
+                className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : ''}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
     </div>
   );
 };
