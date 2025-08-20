@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User, BankAccount } from '../types';
+import { User, BankAccount, PagedResponse } from '../types';
 
 const API_BASE_URL = 'http://localhost:8080';
 
@@ -8,9 +8,9 @@ const api = axios.create({
   timeout: 10000,
 });
 
-export const fetchUsers = async (): Promise<User[]> => {
+export const fetchUsers = async (page: number = 0, size: number = 20): Promise<PagedResponse<User>> => {
   try {
-    const response = await api.get<User[]>('/api/v1/users');
+    const response = await api.get<PagedResponse<User>>(`/api/v1/users?page=${page}&size=${size}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching users:', error);
