@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { User, PagedResponse } from '../types';
+import React, { useState, useEffect, useCallback } from 'react';
+import { User } from '../types';
 import { fetchUsers } from '../services/api';
 import {
   Pagination,
@@ -25,11 +25,7 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
 
-  useEffect(() => {
-    loadUsers(currentPage);
-  }, [currentPage]);
-
-  const loadUsers = async (page: number) => {
+  const loadUsers = useCallback(async (page: number) => {
     try {
       setLoading(true);
       setError(null);
@@ -42,13 +38,19 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
     } finally {
       setLoading(false);
     }
-  };
+  }, [pageSize]);
+
+  useEffect(() => {
+    console.log('useEffect triggered, loading page:', currentPage);
+    loadUsers(currentPage);
+  }, [currentPage, loadUsers]);
 
   const handleRetry = () => {
     loadUsers(currentPage);
   };
 
   const handlePageChange = (page: number) => {
+    console.log('Changing page to:', page, 'from:', currentPage);
     setCurrentPage(page);
   };
 
@@ -252,6 +254,9 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (currentPage < totalPages - 1) {
+                    handlePageChange(currentPage + 1);
+                  }
                 }}
                 className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : ''}
               />
