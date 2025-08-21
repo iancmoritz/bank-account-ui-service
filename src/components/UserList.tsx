@@ -252,9 +252,6 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
-                  if (currentPage < totalPages - 1) {
-                    handlePageChange(currentPage + 1);
-                  }
                 }}
                 className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : ''}
               />
