@@ -1,12 +1,15 @@
 import { useState } from 'react';
 import UserList from './components/UserList';
 import AccountList from './components/AccountList';
+import { User } from './types';
 
 function App() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
-  const handleUserSelect = (userId: string) => {
+  const handleUserSelect = (userId: string, user: User) => {
     setSelectedUserId(userId);
+    setSelectedUser(user);
   };
 
   return (
@@ -36,7 +39,7 @@ function App() {
             />
           </div>
           <div className="lg:col-span-1">
-            <AccountList userId={selectedUserId} />
+            <AccountList userId={selectedUserId} username={selectedUser?.username || null} />
           </div>
         </div>
       </main>

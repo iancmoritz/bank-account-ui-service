@@ -4,9 +4,10 @@ import { fetchAccountsByUserId } from '../services/api';
 
 interface AccountListProps {
   userId: string | null;
+  username: string | null;
 }
 
-const AccountList: React.FC<AccountListProps> = ({ userId }) => {
+const AccountList: React.FC<AccountListProps> = ({ userId, username }) => {
   const [accounts, setAccounts] = useState<BankAccount[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -105,7 +106,7 @@ const AccountList: React.FC<AccountListProps> = ({ userId }) => {
   if (loading) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {userId}</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {username} ({userId})</h2>
         <div className="flex items-center justify-center py-8">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
           <span className="ml-2 text-gray-600">Loading accounts...</span>
@@ -117,7 +118,7 @@ const AccountList: React.FC<AccountListProps> = ({ userId }) => {
   if (error) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {userId}</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {username} ({userId})</h2>
         <div className="text-center py-8">
           <div className="text-red-600 mb-4">
             <svg className="mx-auto h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -139,7 +140,7 @@ const AccountList: React.FC<AccountListProps> = ({ userId }) => {
   if (accounts.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {userId}</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {username} ({userId})</h2>
         <div className="text-center py-8 text-gray-500">
           <svg className="mx-auto h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
@@ -152,7 +153,7 @@ const AccountList: React.FC<AccountListProps> = ({ userId }) => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {userId}</h2>
+      <h2 className="text-xl font-semibold mb-4 text-gray-800">Bank Accounts for {username} ({userId})</h2>
       <div className="space-y-4">
         {accounts.map((account) => (
           <div
