@@ -4,9 +4,11 @@ import AccountList from './components/AccountList';
 
 function App() {
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUserName, setSelectedUserName] = useState<string | null>(null);
 
-  const handleUserSelect = (userId: string) => {
+  const handleUserSelect = (userId: string, username: string) => {
     setSelectedUserId(userId);
+    setSelectedUserName(username);
   };
 
   return (
@@ -36,7 +38,7 @@ function App() {
             />
           </div>
           <div className="lg:col-span-1">
-            <AccountList userId={selectedUserId} />
+            <AccountList userId={selectedUserId} userName={selectedUserName} />
           </div>
         </div>
       </main>

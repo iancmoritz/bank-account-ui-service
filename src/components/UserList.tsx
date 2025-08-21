@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, PagedResponse } from '../types';
+import { User } from '../types';
 import { fetchUsers } from '../services/api';
 import {
   Pagination,
@@ -13,7 +13,7 @@ import {
 
 interface UserListProps {
   selectedUserId: string | null;
-  onUserSelect: (userId: string) => void;
+  onUserSelect: (userId: string, username: string) => void;
 }
 
 const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => {
@@ -208,7 +208,7 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
         {users.map((user) => (
           <button
             key={user.userId}
-            onClick={() => onUserSelect(user.userId)}
+            onClick={() => onUserSelect(user.userId, user.username)}
             className={`w-full text-left p-3 rounded-md transition-colors ${
               selectedUserId === user.userId
                 ? 'bg-blue-100 border-2 border-blue-500 text-blue-800'
@@ -222,7 +222,7 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
                 </svg>
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium">{user.userId}</p>
+                <p className="text-sm font-medium">{user.username}</p>
               </div>
             </div>
           </button>
