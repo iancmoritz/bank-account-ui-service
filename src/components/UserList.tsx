@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, PagedResponse } from '../types';
+import { User } from '../types';
 import { fetchUsers } from '../services/api';
 import {
   Pagination,
@@ -252,6 +252,9 @@ const UserList: React.FC<UserListProps> = ({ selectedUserId, onUserSelect }) => 
                 href="#"
                 onClick={(e) => {
                   e.preventDefault();
+                  if (currentPage < totalPages - 1) {
+                    handlePageChange(currentPage + 1);
+                  }
                 }}
                 className={currentPage === totalPages - 1 ? 'pointer-events-none opacity-50' : ''}
               />
